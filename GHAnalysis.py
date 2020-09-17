@@ -27,30 +27,7 @@ class Data:
                     str_list = [_x for _x in x.split('\n') if len(_x) > 0]      #对大字符串进行分割，每个元素是列表的一部分
                     for i, _str in enumerate(str_list):     #i是序号，_str是里面的一部分字符串，对应每一次行为的信息  
                             json_list.append(json.loads(_str))      
-        records = self.__listOfNestedDict2ListOfDict(json_list)
-        self.__4Events4PerP = {}
-        self.__4Events4PerR = {}
-        self.__4Events4PerPPerR = {}
-        for i in records:
-            if not self.__4Events4PerP.get(i['actor__login'], 0):
-                self.__4Events4PerP.update({i['actor__login']: {}})
-                self.__4Events4PerPPerR.update({i['actor__login']: {}})
-            self.__4Events4PerP[i['actor__login']][i['type']
-                                         ] = self.__4Events4PerP[i['actor__login']].get(i['type'], 0)+1
-            if not self.__4Events4PerR.get(i['repo__name'], 0):
-                self.__4Events4PerR.update({i['repo__name']: {}})
-            self.__4Events4PerR[i['repo__name']][i['type']
-                                       ] = self.__4Events4PerR[i['repo__name']].get(i['type'], 0)+1
-            if not self.__4Events4PerPPerR[i['actor__login']].get(i['repo__name'], 0):
-                self.__4Events4PerPPerR[i['actor__login']].update({i['repo__name']: {}})
-            self.__4Events4PerPPerR[i['actor__login']][i['repo__name']][i['type']
-                                                          ] = self.__4Events4PerPPerR[i['actor__login']][i['repo__name']].get(i['type'], 0)+1
-        with open('1.json', 'w', encoding='utf-8') as f:
-            json.dump(self.__4Events4PerP,f)
-        with open('2.json', 'w', encoding='utf-8') as f:
-            json.dump(self.__4Events4PerR,f)
-        with open('3.json', 'w', encoding='utf-8') as f:
-            json.dump(self.__4Events4PerPPerR,f)
+        records = self.__listOfNestedDict2ListOfDict(json_list)     #用两个嵌套函数将数据转化，使其中没有嵌套dict,便于直接查找
 
     def __parseDict(self, d: dict, prefix: str):
         _d = {}
@@ -68,6 +45,29 @@ class Data:
             _d = self.__parseDict(d, '')
             records.append(_d)
         return records
+        self.__4Events4PerP = {}
+        self.__4Events4PerR = {}
+        self.__4Events4PerPPerR = {}
+        for i in records:
+            if not self.__4Events4PerP.get(i['actor__login'], 0):
+                self.__4Events4PerP.update({i['actor__login']: {}})
+                self.__4Events4PerPPerR.update({i['actor__login']: {}})
+            self.__4Events4PerP[i['actor__login']][i['type']        #无法确定是否有相关key，所以使用get,没有就设置初值为0
+                                         ] = self.__4Events4PerP[i['actor__login']].get(i['type'], 0)+1     
+            if not self.__4Events4PerR.get(i['repo__name'], 0):
+                self.__4Events4PerR.update({i['repo__name']: {}})
+            self.__4Events4PerR[i['repo__name']][i['type']
+                                       ] = self.__4Events4PerR[i['repo__name']].get(i['type'], 0)+1
+            if not self.__4Events4PerPPerR[i['actor__login']].get(i['repo__name'], 0):
+                self.__4Events4PerPPerR[i['actor__login']].update({i['repo__name']: {}})
+            self.__4Events4PerPPerR[i['actor__login']][i['repo__name']][i['type']
+                                                          ] = self.__4Events4PerPPerR[i['actor__login']][i['repo__name']].get(i['type'], 0)+1
+        with open('1.json', 'w', encoding='utf-8') as f:
+            json.dump(self.__4Events4PerP,f)
+        with open('2.json', 'w', encoding='utf-8') as f:
+            json.dump(self.__4Events4PerR,f)
+        with open('3.json', 'w', encoding='utf-8') as f:
+            json.dump(self.__4Events4PerPPerR,f)
 
     def getEventsUsers(self, username: str, event: str) -> int:
         if not self.__4Events4PerP.get(username,0):
