@@ -1,6 +1,5 @@
 import json
 import os
-
 import argparse
 
 
@@ -26,11 +25,8 @@ class Data:
                     x = open(dict_address+'\\'+json_path,       #这里使用转义字符编辑了文件查询路径
                              'r', encoding='utf-8').read()      #得到了一个大字符串
                     str_list = [_x for _x in x.split('\n') if len(_x) > 0]      #对大字符串进行分割，每个元素是列表的一部分
-                    for i, _str in enumerate(str_list):     #i是序号，_str是里面的一部分字符串，时每一次行为的信息  
-                        try:
-                            json_list.append(json.loads(_str))      #
-                        except:
-                            pass
+                    for i, _str in enumerate(str_list):     #i是序号，_str是里面的一部分字符串，对应每一次行为的信息  
+                            json_list.append(json.loads(_str))      
         records = self.__listOfNestedDict2ListOfDict(json_list)
         self.__4Events4PerP = {}
         self.__4Events4PerR = {}
